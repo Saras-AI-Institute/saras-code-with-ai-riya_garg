@@ -14,17 +14,17 @@ def load_data():
         median_steps = data['steps'].median()
         data['steps'].fillna(median_steps, inplace=True)
 
-    # Step 3: Fill missing Sleep_Hours with 7.0
-    if 'Sleep_Hours' in data.columns:
-        data['Sleep_Hours'].fillna(7.0, inplace=True)
+    # Step 3: Fill missing sleep_hours with 7.0
+    if 'sleep_hours' in data.columns:
+        data['sleep_hours'].fillna(7.0, inplace=True)
 
-    # Step 4: Fill missing Heart_Rate_bpm with 68
-    if 'Heart_Rate_bpm' in data.columns:
-        data['Heart_Rate_bpm'].fillna(68, inplace=True)
+    # Step 4: Fill missing heart_rate_bpm with 68
+    if 'heart_rate_bpm' in data.columns:
+        data['heart_rate_bpm'].fillna(68, inplace=True)
 
     # Step 5: Fill other columns with their median values
     for column in data.columns:
-        if column not in ['steps', 'Sleep_Hours', 'Heart_Rate_bpm', 'date']:
+        if column not in ['steps', 'sleep_hours', 'heart_rate_bpm', 'date']:
             median_value = data[column].median()
             data[column].fillna(median_value, inplace=True)
 
@@ -47,16 +47,16 @@ def calculate_recovery_score(df):
     for index, row in df.iterrows():
         score = 50  # Start with a base score of 50
 
-        # Adjust score based on Sleep_Hours
-        if row['Sleep_Hours'] >= 7:
+        # Adjust score based on sleep_hours
+        if row['sleep_hours'] >= 7:
             score += 20  # Good sleep boosts score
-        elif row['Sleep_Hours'] < 6:
+        elif row['sleep_hours'] < 6:
             score -= 20  # Poor sleep reduces score
 
-        # Adjust score based on Heart_Rate_bpm
-        if row['Heart_Rate_bpm'] <= 60:
+        # Adjust score based on heart_rate_bpm
+        if row['heart_rate_bpm'] <= 60:
             score += 20  # Lower heart rate improves recovery
-        elif row['Heart_Rate_bpm'] >= 90:
+        elif row['heart_rate_bpm'] >= 90:
             score -= 10  # Higher heart rate slightly reduces recovery
 
         # Adjust score based on Steps
@@ -69,4 +69,14 @@ def calculate_recovery_score(df):
         df.at[index, 'Recovery_score'] = score
 
     return df
+
+
+def process_data():
+    """
+    Process the data by loading it and calculating the recovery score.
+    This will return the processed DataFrame.
+    """
+    df = load_data()  # Call load_data to get the cleaned DataFrame
+    df = calculate_recovery_score(df)  # Add Recovery Score
+    return df  # Return the processed DataFrame
 
