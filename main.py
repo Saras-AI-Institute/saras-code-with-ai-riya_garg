@@ -15,8 +15,8 @@ with st.spinner('Loading and processing data...'):
     df = process_data()
 
 # Show a preview of the data
-st.write("### Data Preview")
-st.dataframe(df.head(10))
+# st.write("### Data Preview")
+# st.dataframe(df.head(10))
 
 # Add a sidebar for filters
 st.sidebar.header("Filters")
