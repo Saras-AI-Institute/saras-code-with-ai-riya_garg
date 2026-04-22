@@ -1,23 +1,38 @@
-import streamlit as st
-from modules.processor import process_data
 import plotly.express as px
+import streamlit as st
+from utils import apply_theme
+from modules.processor import process_data
+
+# Use st.cache_data for caching
+@st.cache_data
+def load_data():
+    return process_data()
 
 # Configure the Streamlit page
-st.set_page_config(layout="wide", page_title="FitSync")
+st.set_page_config(layout="wide", page_title="Dashboard")
 
 # Title of the dashboard
 st.title("FitSync - Personal Health Analytics")
 
-# Add a separator
-st.markdown("---")
+st.markdown("## Dashboard")
+
+# Improve visual appeal
+st.markdown(
+    """
+    Welcome to the dashboard! Here is where you can track your health progress through various insights and metrics.
+    - **Average Steps**: Stay motivated by tracking your steps.
+    - **Average Sleep Hours**: Ensure you're getting enough rest.
+    - **Recovery Score**: Monitor your recovery for optimal performance.
+    """
+)
+
+# Theme selection
+theme_option = st.sidebar.selectbox("Select Theme", ["Light", "Dark"], index=0)
+apply_theme(theme_option)
 
 # Load and process the data
 with st.spinner('Loading and processing data...'):
-    df = process_data()
-
-# Show a preview of the data
-# st.write("### Data Preview")
-# st.dataframe(df.head(10))
+    df = load_data()
 
 # Add a sidebar for filters
 st.sidebar.header("Filters")
@@ -39,6 +54,7 @@ else:
 average_steps_filtered = filtered_df['steps'].mean()
 average_sleep_hours_filtered = filtered_df['sleep_hours'].mean()
 average_recovery_score_filtered = filtered_df['Recovery_score'].mean()
+
 # Create a 3-column layout for the metrics
 col1, col2, col3 = st.columns(3)
 
@@ -46,7 +62,6 @@ col1, col2, col3 = st.columns(3)
 col1.metric(label="Average Steps", value=f"{average_steps_filtered:.0f}", delta=None)
 col2.metric(label="Average Sleep Hours", value=f"{average_sleep_hours_filtered:.1f}", delta=None)
 col3.metric(label="Average Recovery Score", value=f"{average_recovery_score_filtered:.1f}", delta=None)
-
 # Add a separator
 st.markdown("---")
 

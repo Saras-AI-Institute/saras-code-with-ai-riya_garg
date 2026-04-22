@@ -2,6 +2,12 @@ import streamlit as st
 from modules.processor import process_data
 import plotly.express as px
 import pandas as pd
+from utils import apply_theme
+
+# Use st.cache_data for caching
+@st.cache_data
+def load_data():
+    return process_data()
 
 # Configure the Streamlit page
 st.set_page_config(layout="wide", page_title="Trends and Insights")
@@ -12,11 +18,15 @@ st.title("Trends and Insights")
 # Add a separator
 st.markdown("---")
 
+# Theme selection
+theme_option = st.sidebar.selectbox("Select Theme", ["Light", "Dark"], index=0)
+apply_theme(theme_option)
+
 # Load and process the data
 with st.spinner('Loading and processing data...'):
-    df = process_data()
+    df = load_data()
 
-# Add a sidebar for filters (reusing the logic from the dashboard page)
+# Add a sidebar for filters
 st.sidebar.header("Filters")
 time_range = st.sidebar.selectbox(
     "Select Time Range",
@@ -72,4 +82,3 @@ for metric in metrics:
     )
     st.plotly_chart(histogram_fig, use_container_width=True)
     st.markdown("---")  # Add a separator between histograms
-
